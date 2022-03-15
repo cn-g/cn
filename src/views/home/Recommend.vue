@@ -119,25 +119,30 @@
         <!-- 添加弹出框 -->
         <el-dialog title="添加" v-model="addEditVisible" width="30%">
             <el-form label-width="70px">
-                <el-form-item label="标题">
-                    <el-input v-model="addform.title"></el-input>
-                </el-form-item>
-                <el-form-item label="摘要">
-                    <el-input v-model="addform.synopsis"></el-input>
-                </el-form-item>
-                <el-form-item label="头像">
-                    <el-image v-if="addform.picUrl" class="table-td-thumb" :src="addform.picUrl" fit="fill" style="width:100%;height:100%" lazy>
-                    </el-image>
-                </el-form-item>
-                <el-form-item label="内容">
-                    <el-input type="textarea" rows="3" v-model="addform.content"></el-input>
-                </el-form-item>
-                <el-form-item label="博客标题" prop="region">
-                    <el-select v-model="addform.blogId" placeholder="请选择" filterable :filter-method="searchEssay">
+                <el-form-item label="博客" prop="region">
+                    <el-select v-model="addform.blogId" placeholder="请选择" filterable :filter-method="searchEssay" @change="getEssayById">
                         <el-option v-for="essay in selectDate" :key="essay.id" :label="essay.name" :value="essay.id"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="状态">
+                <el-form-item label="博主昵称" v-if="addform.blogId">
+                    <el-input v-model="addform.blogUserName" disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="博主头像" v-if="addform.blogId">
+                    <el-image class="table-td-thumb" :src="addform.blogUserPic" disabled="true" lazy></el-image>
+                </el-form-item>
+                <el-form-item label="发布日期" v-if="addform.blogId">
+                        <el-date-picker type="date" placeholder="选择日期" value-format="YYYY-MM-DD" v-model="addform.blogTime"
+                            style="width: 100%;"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="博客图片" v-if="addform.picUrl">
+                    <el-image  class="table-td-thumb" :src="addform.blogPic" style="width:80%;height:80%" lazy>
+                    </el-image>
+                </el-form-item>
+                <el-form-item label="展示日期">
+                        <el-date-picker type="date" placeholder="选择日期" value-format="YYYY-MM-DD" v-model="addform.day"
+                            style="width: 100%;"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="状态" disabled="true">
                     <el-radio v-model="addform.status" :label="0">禁用</el-radio>
                     <el-radio v-model="addform.status" :label="1">启用</el-radio>
                 </el-form-item>
@@ -286,8 +291,17 @@ export default {
 
         const getEssayById = ()=>{
             if(addform.blogId!=""){
-                d
-                getEssay()
+                deleteData.id = addform.blogId;
+                getEssay(deleteData).then((res)=>{
+                    addform.blogId = res.data.id;
+                    addform.blogTitle= res.data.title;
+                    addform.blogPic = res.data.picUrl;
+                    addform.blogUserId = res.data.userId;
+                    addform.status = res.data.status;
+                    addform.blogUserName = res.data.name;
+                    addform.blogUserPic = res.data.userPicUrl;
+                    addform.blogTime = res.data.publishTime
+                })
             }
         }
         const selectDate = ref([]);
@@ -299,13 +313,15 @@ export default {
         };
         let addform = reactive({
             blogId: "",
-            content:"",
-            label:"",
+            blogPic:"",
+            blogTitle:"",
+            blogUserId:"",
+            blogUserName:"",
+            blogUserPic:"",
+            blogTime:"",
+            sort:"",
             status: "",
-            picUrl:"",
-            synopsis:"",
-            title:"",
-            userId:""
+            day:""
         });
         const addEssayEdit = () => {
             addEssay(addform).then((res)=>{
