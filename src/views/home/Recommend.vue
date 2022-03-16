@@ -9,47 +9,39 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-input v-model="query.title" placeholder="标题" class="handle-input mr10" clearable></el-input>
-                <el-select v-model="query.categoryId" placeholder="类目" class="handle-select mr10" clearable>
-                    <el-option v-for="category in selectDate" :key="category.id" :label="category.name" :value="category.id"></el-option>
-                </el-select>
+                <el-date-picker type="date" placeholder="选择日期" value-format="YYYY-MM-DD" v-model="query.day" style="margin-right:10px" clearable></el-date-picker>
                 <el-select v-model="query.status" placeholder="状态" class="handle-select mr10" clearable>
                     <el-option key="0" label="禁用" value="0"></el-option>
                     <el-option key="1" label="启用" value="1"></el-option>
-                </el-select>
-                <el-select v-model="query.label" placeholder="标签" class="handle-select mr10" clearable>
-                    <el-option key="1" label="发布" value="1"></el-option>
-                    <el-option key="2" label="草稿" value="2"></el-option>
                 </el-select>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                 <el-button type="primary" icon="el-icon-circle-plus" @click="addEdit">添加</el-button>
             </div>
             <el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
-                <el-table-column prop="title" label="标题"></el-table-column>
-                <el-table-column prop="synopsis" label="摘要"></el-table-column>
+                <el-table-column prop="blogTitle" label="标题"></el-table-column>
                 <el-table-column label="展示图" align="center">
                     <template #default="scope">
-                        <el-image class="table-td-thumb" :src="scope.row.picUrl" :preview-src-list="[scope.row.picUrl]" lazy>
+                        <el-image class="table-td-thumb" :src="scope.row.blogPic" :preview-src-list="[scope.row.blogPic]" lazy>
                         </el-image>
                     </template>
                 </el-table-column>
-                <el-table-column prop="content" label="内容" v-if="false"></el-table-column>
-                <el-table-column label="标签" align="center">
+                <el-table-column prop="publishTime" label="发布时间"></el-table-column>
+                <el-table-column prop="blogUserName" label="博主昵称"></el-table-column>
+                <el-table-column label="博主头像" align="center">
                     <template #default="scope">
-                        <el-tag :type="scope.row.label === 1?'success':scope.row.label === 2?'danger':''">{{ pubData[scope.row.label] }}</el-tag>
+                        <el-image class="table-td-thumb" :src="scope.row.blogUserPic" :preview-src-list="[scope.row.blogUserPic]" lazy>
+                        </el-image>
                     </template>
                 </el-table-column>
-                <el-table-column prop="commentNumber" label="评论数"></el-table-column>
-                <el-table-column prop="goodNumber" label="点赞数"></el-table-column>
-                <el-table-column prop="viewNumber" label="浏览数"></el-table-column>
+                <el-table-column prop="sort" label="序号" v-if="false"></el-table-column>
                 <el-table-column label="状态" align="center">
                     <template #default="scope">
                         <el-tag :type="scope.row.status === 1?'success':scope.row.status === 0?'danger':''">{{ statusData[scope.row.status] }}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column prop="publishTime" label="发布时间"></el-table-column>
                 <el-table-column prop="createTime" label="创建时间"></el-table-column>
+                <el-table-column prop="updateTime" label="更新时间"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template #default="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑
@@ -68,41 +60,31 @@
         <!-- 编辑弹出框 -->
         <el-dialog title="编辑" v-model="editVisible" width="30%">
             <el-form label-width="70px">
-                <el-form-item label="标题">
-                    <el-input v-model="updateform.title"></el-input>
-                </el-form-item>
-                <el-form-item label="摘要">
-                    <el-input v-model="updateform.synopsis"></el-input>
-                </el-form-item>
-                <el-form-item label="头像">
-                    <el-upload class="upload-demo" 
-                        :action=uploadUrl 
-                        auto-upload 
-                        :on-success="uploadSuccess">
-                        <el-image v-if="updateform.picUrl" class="table-td-thumb" :src="updateform.picUrl" fit="fill" style="width:100%;height:100%" lazy>
-                        </el-image>
-                        <i v-else class="el-icon-upload"></i>
-                        <div v-if="!updateform.picUrl">
-                            <em>点击上传</em>
-                        </div>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="内容">
-                    <el-input type="textarea" rows="3" v-model="updateform.content"></el-input>
-                </el-form-item>
-                <el-form-item label="类目" prop="region">
-                    <el-select v-model="updateform.categoryId" placeholder="请选择">
-                        <el-option v-for="category in selectDate" :key="category.id" :label="category.name" :value="category.id"></el-option>
+                <el-form-item label="博客选择" prop="region">
+                    <el-select v-model="updateform.blogId" placeholder="请选择" filterable :filter-method="searchEssay" @change="getEssayById" clearable>
+                        <el-option v-for="essay in selectDate" :key="essay.id" :label="essay.name" :value="essay.id"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="发布人" prop="region">
-                    <el-select v-model="updateform.userId" placeholder="请选择">
-                        <el-option v-for="account in selectAccountDate" :key="account.id" :label="account.name" :value="account.id"></el-option>
-                    </el-select>
+                <el-form-item label="博主昵称" v-if="updateform.blogId">
+                    <el-input v-model="updateform.blogUserName" disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item label="标签">
-                    <el-radio v-model="updateform.label" :label="1">发布</el-radio>
-                    <el-radio v-model="updateform.label" :label="2">草稿</el-radio>
+                <el-form-item label="博主头像" v-if="updateform.blogId">
+                    <el-image class="table-td-thumb" :src="updateform.blogUserPic" lazy></el-image>
+                </el-form-item>
+                <el-form-item label="发布日期" v-if="updateform.blogId">
+                    <el-date-picker type="datetime" placeholder="选择日期" value-format="YYYY-MM-DD hh:mm:ss" v-model="updateform.blogTime"
+                        disabled="true" ></el-date-picker>
+                </el-form-item>
+                <el-form-item label="博客图片" v-if="updateform.blogPic">
+                    <el-image  class="table-td-thumb" :src="updateform.blogPic" style="width:80%;height:80%" lazy>
+                    </el-image>
+                </el-form-item>
+                <el-form-item label="展示日期" prop="day">
+                    <el-date-picker type="datetime" placeholder="选择日期" value-format="YYYY-MM-DD hh:mm:ss" v-model="updateform.day"
+                         clearable></el-date-picker>
+                </el-form-item>
+                <el-form-item label="排序">
+                    <el-input type="number" v-model="updateform.sort"></el-input>
                 </el-form-item>
                 <el-form-item label="状态">
                     <el-radio v-model="updateform.status" :label="0">禁用</el-radio>
@@ -119,8 +101,8 @@
         <!-- 添加弹出框 -->
         <el-dialog title="添加" v-model="addEditVisible" width="30%">
             <el-form label-width="70px">
-                <el-form-item label="博客" prop="region">
-                    <el-select v-model="addform.blogId" placeholder="请选择" filterable :filter-method="searchEssay" @change="getEssayById">
+                <el-form-item label="博客选择" prop="region">
+                    <el-select v-model="addform.blogId" placeholder="请选择" filterable :filter-method="searchEssay" @change="getEssayById" clearable>
                         <el-option v-for="essay in selectDate" :key="essay.id" :label="essay.name" :value="essay.id"></el-option>
                     </el-select>
                 </el-form-item>
@@ -131,16 +113,19 @@
                     <el-image class="table-td-thumb" :src="addform.blogUserPic" disabled="true" lazy></el-image>
                 </el-form-item>
                 <el-form-item label="发布日期" v-if="addform.blogId">
-                        <el-date-picker type="date" placeholder="选择日期" value-format="YYYY-MM-DD" v-model="addform.blogTime"
-                            style="width: 100%;"></el-date-picker>
+                    <el-date-picker type="datetime" placeholder="选择日期" value-format="YYYY-MM-DD hh:mm:ss" v-model="addform.blogTime"
+                        disabled="true" ></el-date-picker>
                 </el-form-item>
-                <el-form-item label="博客图片" v-if="addform.picUrl">
+                <el-form-item label="博客图片" v-if="addform.blogPic">
                     <el-image  class="table-td-thumb" :src="addform.blogPic" style="width:80%;height:80%" lazy>
                     </el-image>
                 </el-form-item>
-                <el-form-item label="展示日期">
-                        <el-date-picker type="date" placeholder="选择日期" value-format="YYYY-MM-DD" v-model="addform.day"
-                            style="width: 100%;"></el-date-picker>
+                <el-form-item label="展示日期" prop="day">
+                    <el-date-picker type="datetime" placeholder="选择日期" value-format="YYYY-MM-DD hh:mm:ss" v-model="addform.day"
+                         clearable></el-date-picker>
+                </el-form-item>
+                <el-form-item label="排序">
+                    <el-input type="number" v-model="addform.sort"></el-input>
                 </el-form-item>
                 <el-form-item label="状态" disabled="true">
                     <el-radio v-model="addform.status" :label="0">禁用</el-radio>
@@ -150,7 +135,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="addEditVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="addEssayEdit">确 定</el-button>
+                    <el-button type="primary" @click="addRecommendEdit">确 定</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -160,15 +145,13 @@
 <script>
 import { ref, reactive } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { updateEssay, addEssay, deleteEssay, getEssayPage, getEssayData, getEssay, getCategoryData, getAccountData } from "../../api/index";
+import { updateRecommend, addRecommend, deleteRecommend, getRecommendPage, getEssayData, getEssay } from "../../api/index";
 
 export default {
     name: "recommend",
     setup() {
         const query = reactive({
-            title: "",
-            categoryId: "",
-            label:"",
+            day: "",
             status:"",
             page: 1,
             rows: 10,
@@ -177,7 +160,7 @@ export default {
         const pageTotal = ref(0);
         // 获取表格数据
         const getData = () => {
-            getEssayPage(query).then((res) => {
+            getRecommendPage(query).then((res) => {
                 if(res.errorCode == 200){
                     tableData.value = res.data;
                 }else{
@@ -225,11 +208,15 @@ export default {
             })
                 .then(() => {
                     console.log(res.id);
-                    deleteEssay(deleteData).then((res)=>{
+                    deleteRecommend(deleteData).then((res)=>{
                         console.log(res.message);
+                        if(res.errorCode == 200){
+                            ElMessage.success("删除成功");
+                            getData();
+                        }else{
+                            ElMessage.success("删除失败");
+                        }
                     })
-                    ElMessage.success("删除成功");
-                    tableData.value.splice(index, 1);
                 })
                 .catch(() => {});
         };
@@ -245,14 +232,16 @@ export default {
         const editVisible = ref(false);
         let updateform = reactive({
             id:"",
-            categoryId: "",
-            content:"",
-            label:"",
+            blogId: "",
+            blogPic:"",
+            blogTitle:"",
+            blogUserId:"",
+            blogUserName:"",
+            blogUserPic:"",
+            blogTime:"",
+            sort:"",
             status: "",
-            synopsis:"",
-            picUrl:"",
-            title:"",
-            userId:""
+            day:""
         });
         let idx = -1;
         const handleEdit = (index, row) => {
@@ -263,7 +252,7 @@ export default {
             editVisible.value = true;
         };
         const saveEdit = () => {
-            updateEssay(updateform).then((res)=>{
+            updateRecommend(updateform).then((res)=>{
                 if(res.errorCode == 200){
                     editVisible.value = false;
                     ElMessage.success(`修改成功`);
@@ -278,13 +267,16 @@ export default {
             });
             
         };
-
+        let selectName = reactive({
+            name:"",
+        });
+        const searchEssay = (val)=>{
+            selectName.name = val;
+            selectEssayDate();
+        }
         const selectEssayDate = ()=>{
-            getEssayData().then((res)=>{
+            getEssayData(selectName).then((res)=>{
                 selectDate.value = res.data;
-            });
-            getAccountData().then((res)=>{
-                selectAccountDate.value = res.data;
             });
         };
         selectEssayDate();
@@ -292,17 +284,32 @@ export default {
         const getEssayById = ()=>{
             if(addform.blogId!=""){
                 deleteData.id = addform.blogId;
-                getEssay(deleteData).then((res)=>{
-                    addform.blogId = res.data.id;
-                    addform.blogTitle= res.data.title;
-                    addform.blogPic = res.data.picUrl;
-                    addform.blogUserId = res.data.userId;
-                    addform.status = res.data.status;
-                    addform.blogUserName = res.data.name;
-                    addform.blogUserPic = res.data.userPicUrl;
-                    addform.blogTime = res.data.publishTime
-                })
             }
+            if(updateform.blogId!=""){
+                deleteData.id = updateform.blogId;
+            }
+            getEssay(deleteData).then((res)=>{
+                console.log(editVisible.value);
+                if(addEditVisible.value){
+                        addform.blogId = res.data.id;
+                        addform.blogTitle= res.data.title;
+                        addform.blogPic = res.data.picUrl;
+                        addform.blogUserId = res.data.userId;
+                        addform.blogUserName = res.data.name;
+                        addform.blogUserPic = res.data.userPicUrl;
+                        addform.blogTime = res.data.publishTime;
+                }
+                if(editVisible.value){
+                        updateform.blogId = res.data.id;
+                        updateform.blogTitle= res.data.title;
+                        updateform.blogPic = res.data.picUrl;
+                        updateform.blogUserId = res.data.userId;
+                        updateform.blogUserName = res.data.name;
+                        updateform.blogUserPic = res.data.userPicUrl;
+                        updateform.blogTime = res.data.publishTime;
+                }
+                    
+            })
         }
         const selectDate = ref([]);
         const selectAccountDate = ref([]);
@@ -323,13 +330,17 @@ export default {
             status: "",
             day:""
         });
-        const addEssayEdit = () => {
-            addEssay(addform).then((res)=>{
+        const addRecommendEdit = () => {
+            addRecommend(addform).then((res)=>{
                 console.log(res.message);
+                if(res.errorCode == 200){
+                    addEditVisible.value = false;
+                    ElMessage.success(`添加成功`);
+                    getData();
+                }else{
+                    ElMessage.success(`添加失败`);
+                }
             });
-            addEditVisible.value = false;
-            ElMessage.success(`添加成功`);
-            getData();
         };
         
 
@@ -346,14 +357,16 @@ export default {
             statusData,
             pubData,
             selectAccountDate,
+            selectName,
             uploadUrl,
+            searchEssay,
             uploadSuccess,
             handleSearch,
             handlePageChange,
             handleDelete,
             addEdit,
             handleEdit,
-            addEssayEdit,
+            addRecommendEdit,
             saveEdit,
             selectEssayDate,
             getEssayById

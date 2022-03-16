@@ -266,3 +266,32 @@ export const deleteSearch = data => {
         data: data
     });
 };
+//热门博客榜单
+export const getRecommendPage = query => {
+    return request({
+        url: '/recommend/getRecommendPage',
+        method: 'get',
+        params: query
+    });
+};
+export const addRecommend = data => {
+    return request({
+        url: '/recommend/addRecommend',
+        method: 'post',
+        data: data
+    });
+};
+export const updateRecommend = data => {
+    return request({
+        url: '/recommend/updateRecommend',
+        method: 'post',
+        data: data
+    });
+};
+export const deleteRecommend = data => {
+    return request({
+        url: '/recommend/deleteRecommend',
+        method: 'post',
+        data: data
+    });
+};
