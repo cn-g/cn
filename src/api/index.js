@@ -266,6 +266,35 @@ export const deleteSearch = data => {
         data: data
     });
 };
+//搜索历史
+export const getHistoryPage = query => {
+    return request({
+        url: '/history/getHistoryPage',
+        method: 'get',
+        params: query
+    });
+};
+export const addHistory = data => {
+    return request({
+        url: '/history/addHistory',
+        method: 'post',
+        data: data
+    });
+};
+export const updateHistory = data => {
+    return request({
+        url: '/history/updateHistory',
+        method: 'post',
+        data: data
+    });
+};
+export const deleteHistory = data => {
+    return request({
+        url: '/history/deleteHistory',
+        method: 'post',
+        data: data
+    });
+};
 //热门博客榜单
 export const getRecommendPage = query => {
     return request({

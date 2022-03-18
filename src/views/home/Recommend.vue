@@ -26,7 +26,8 @@
                         </el-image>
                     </template>
                 </el-table-column>
-                <el-table-column prop="publishTime" label="发布时间"></el-table-column>
+                <el-table-column prop="blogTime" label="发布时间"></el-table-column>
+                <el-table-column prop="day" label="展示时间"></el-table-column>
                 <el-table-column prop="blogUserName" label="博主昵称"></el-table-column>
                 <el-table-column label="博主头像" align="center">
                     <template #default="scope">
@@ -80,8 +81,7 @@
                     </el-image>
                 </el-form-item>
                 <el-form-item label="展示日期" prop="day">
-                    <el-date-picker type="datetime" placeholder="选择日期" value-format="YYYY-MM-DD hh:mm:ss" v-model="updateform.day"
-                         clearable></el-date-picker>
+                    <el-date-picker type="date" placeholder="选择日期" value-format="YYYY-MM-DD" v-model="updateform.day" clearable></el-date-picker>
                 </el-form-item>
                 <el-form-item label="排序">
                     <el-input type="number" v-model="updateform.sort"></el-input>
@@ -121,8 +121,7 @@
                     </el-image>
                 </el-form-item>
                 <el-form-item label="展示日期" prop="day">
-                    <el-date-picker type="datetime" placeholder="选择日期" value-format="YYYY-MM-DD hh:mm:ss" v-model="addform.day"
-                         clearable></el-date-picker>
+                    <el-date-picker type="date" placeholder="选择日期" value-format="YYYY-MM-DD" v-model="addform.day" clearable></el-date-picker>
                 </el-form-item>
                 <el-form-item label="排序">
                     <el-input type="number" v-model="addform.sort"></el-input>

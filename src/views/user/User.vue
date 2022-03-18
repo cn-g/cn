@@ -109,6 +109,11 @@
         <!-- 添加弹出框 -->
         <el-dialog title="添加" v-model="addEditVisible" width="30%">
             <el-form label-width="70px">
+                <el-form-item label="选择账号" prop="region">
+                    <el-select v-model="addform.id" placeholder="请选择" filterable :filter-method="selectAccount">
+                        <el-option v-for="account in selectAccountDate" :key="account.id" :label="account.name" :value="account.id"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="姓名">
                     <el-input v-model="addform.realName"></el-input>
                 </el-form-item>
@@ -166,7 +171,7 @@
 <script>
 import { ref, reactive } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { updateUser, addUser, getUserPage, deleteUser} from "../../api/index";
+import { updateUser, addUser, getUserPage, deleteUser, getAccountData} from "../../api/index";
 import { regionData } from 'element-china-area-data'
 
 export default {
@@ -263,7 +268,17 @@ export default {
                 });
             }).catch(() => {});
         };
-
+        let selectName = reactive({
+            name:"",
+        });
+        const selectAccount = (val)=>{
+            selectName.name = val;
+            getAccountData(selectName).then((res)=>{
+                selectAccountDate.value = res.data;
+            });
+        };
+        const selectAccountDate = ref([]);
+        selectAccount("");
         // 表格编辑时弹窗和保存
         const editVisible = ref(false);
         let updateform = reactive({
@@ -312,6 +327,7 @@ export default {
         };
         const options = regionData;
         let addform = reactive({
+            id:"",
             realName:"",
             picUrl:"",
             sex:null,
@@ -338,6 +354,9 @@ export default {
         };
         
         return {
+            selectName,
+            selectAccount,
+            selectAccountDate,
             query,
             tableData,
             pageTotal,

@@ -74,6 +74,13 @@ const routes = [
                 },
                 component: () => import ( /* webpackChunkName: "table" */ "../views/home/Search.vue")
             }, {
+                path: "/history",
+                name: "history",
+                meta: {
+                    title: '历史管理'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/home/History.vue")
+            },{
                 path: "/recommend",
                 name: "recommend",
                 meta: {

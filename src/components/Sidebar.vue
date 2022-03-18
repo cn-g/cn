@@ -77,16 +77,16 @@ export default {
                     },
                     {
                         index: "/search",
-                        title: "搜索管理",
+                        title: "搜索关键字管理",
                     },
                     {
                         index: "/recommend",
                         title: "热门博客管理",
                     },
-                    // {
-                    //     index: "/operate",
-                    //     title: "操作管理",
-                    // }
+                    {
+                        index: "/history",
+                        title: "搜索历史管理",
+                    }
                 ]
             },
             {
