@@ -10,6 +10,8 @@ const service = axios.create({
 
 service.interceptors.request.use(
     config => {
+        config.headers['token'] = "16451518491977bccb7474b104b5395fae28132617766|1647853035731";
+        config.headers['role_id'] = "16461197675823dd75f2233194189adcb468855b5c343";
         return config;
     },
     error => {

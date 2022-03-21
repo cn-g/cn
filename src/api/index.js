@@ -1,4 +1,12 @@
 import request from '../utils/request';
+//登录
+export const userLogin = query => {
+    return request({
+        url: '/login/userLogin',
+        method: 'get',
+        params: query
+    });
+};
 //账号
 export const getAccountPage = query => {
     return request({
@@ -64,6 +72,13 @@ export const deleteUser = data => {
         data: data
     });
 };
+export const getUserRecommendByUserId = query => {
+    return request({
+        url: '/user/getUserRecommendByUserId',
+        method: 'get',
+        params: query
+    });
+};
 //角色
 export const getRolePage = query => {
     return request({
@@ -98,6 +113,36 @@ export const getRoleData = query => {
         url: '/role/getRoleData',
         method: 'get',
         params: query
+    });
+};
+//接口
+//角色
+export const getUrlPage = query => {
+    return request({
+        url: '/url/getUrlPage',
+        method: 'get',
+        params: query
+    });
+};
+export const addUrl = data => {
+    return request({
+        url: '/url/addUrl',
+        method: 'post',
+        data: data
+    });
+};
+export const updateUrl = data => {
+    return request({
+        url: '/url/updateUrl',
+        method: 'post',
+        data: data
+    });
+};
+export const deleteUrl = data => {
+    return request({
+        url: '/url/deleteUrl',
+        method: 'post',
+        data: data
     });
 };
 //操作
@@ -320,6 +365,35 @@ export const updateRecommend = data => {
 export const deleteRecommend = data => {
     return request({
         url: '/recommend/deleteRecommend',
+        method: 'post',
+        data: data
+    });
+};
+//热门博主榜单
+export const getUserRecommendPage = query => {
+    return request({
+        url: '/userRecommend/getUserRecommendPage',
+        method: 'get',
+        params: query
+    });
+};
+export const addUserRecommend = data => {
+    return request({
+        url: '/userRecommend/addUserRecommend',
+        method: 'post',
+        data: data
+    });
+};
+export const updateUserRecommend = data => {
+    return request({
+        url: '/userRecommend/updateUserRecommend',
+        method: 'post',
+        data: data
+    });
+};
+export const deleteUserRecommend = data => {
+    return request({
+        url: '/userRecommend/deleteUserRecommend',
         method: 'post',
         data: data
     });

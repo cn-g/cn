@@ -4,7 +4,7 @@
             <div class="ms-title">后台管理系统</div>
             <el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
                 <el-form-item prop="username">
-                    <el-input v-model="param.username" placeholder="username">
+                    <el-input v-model="param.account" placeholder="username">
                         <template #prepend>
                             <el-button icon="el-icon-user"></el-button>
                         </template>
@@ -32,13 +32,14 @@ import { ref, reactive } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
+import { userLogin } from "../api/index";
 
 export default {
     setup() {
         const router = useRouter();
         const param = reactive({
-            username: "admin",
-            password: "123123",
+            account: "",
+            password: "",
         });
 
         const rules = {
@@ -55,14 +56,16 @@ export default {
         };
         const login = ref(null);
         const submitForm = () => {
-            login.value.validate((valid) => {
-                if (valid) {
+            userLogin(param).then((res) => {
+                if (res.errorCode == 200) {
                     ElMessage.success("登录成功");
-                    localStorage.setItem("ms_username", param.username);
+                    store.dispatch("setToken",res.data.token);
+                    store.dispatch("setRoleId",res.data.roleId);
+                    console.log(res);
+                    //localStorage.setItem("token", param.username);
                     router.push("/");
                 } else {
-                    ElMessage.error("登录成功");
-                    return false;
+                    ElMessage.error("登录失败");
                 }
             });
         };

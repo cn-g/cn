@@ -31,7 +31,7 @@ const routes = [
                     title: '用户管理'
                 },
                 component: () => import ( /* webpackChunkName: "table" */ "../views/user/User.vue")
-            },{
+            }, {
                 path: "/role",
                 name: "role",
                 meta: {
@@ -39,6 +39,13 @@ const routes = [
                 },
                 component: () => import ( /* webpackChunkName: "table" */ "../views/user/Role.vue")
             }, {
+                path: "/url",
+                name: "url",
+                meta: {
+                    title: '接口管理'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/user/Url.vue")
+            },{
                 path: "/operate",
                 name: "operate",
                 meta: {
@@ -87,6 +94,13 @@ const routes = [
                     title: '热门博客管理'
                 },
                 component: () => import ( /* webpackChunkName: "table" */ "../views/home/Recommend.vue")
+            },{
+                path: "/userRecommend",
+                name: "userRecommend",
+                meta: {
+                    title: '热门博主管理'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/home/UserRecommend.vue")
             }, {
                 path: "/charts",
                 name: "basecharts",

@@ -148,10 +148,13 @@ export default {
                 .then(() => {
                     console.log(res.id);
                     deleteCategory(deleteData).then((res)=>{
-                        console.log(res.message);
+                        if(res.errorCode == 200){
+                            ElMessage.success("删除成功");
+                        }else{
+                            ElMessage.success(res.message);
+                        }
                     })
-                    ElMessage.success("删除成功");
-                    tableData.value.splice(index, 1);
+                    
                 })
                 .catch(() => {});
         };
@@ -178,12 +181,9 @@ export default {
                 if(res.errorCode == 200){
                     editVisible.value = false;
                     ElMessage.success(`修改成功`);
-                    Object.keys(updateform).forEach((item) => {
-                        tableData.value[idx][item] = updateform[item];
-                    });
                     getData();
                 }else{
-                    ElMessage.warning("修改失败")
+                    ElMessage.warning(res.message);
                 }
             });
             
@@ -201,11 +201,16 @@ export default {
         });
         const addCategoryEdit = () => {
             addCategory(addform).then((res)=>{
-                console.log(res.message);
+                if(res.errorCode == 200){
+                    addEditVisible.value = false;
+                    ElMessage.success(`添加成功`);
+                    handleSearch();
+                }else{
+                    ElMessage.success(res.message);
+                }
             });
-            addEditVisible.value = false;
-            ElMessage.success(`添加成功`);
-            handleSearch();
+            
+            
         };
         
 

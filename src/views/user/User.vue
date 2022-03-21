@@ -20,6 +20,7 @@
             </div>
             <el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
+                <el-table-column prop="account" label="用户账号"></el-table-column>
                 <el-table-column prop="realName" label="用户姓名"></el-table-column>
                 <el-table-column label="头像" align="center">
                     <template #default="scope">
@@ -244,7 +245,6 @@ export default {
                     }
                 }
             }
-            console.log(selectedOptions.value);
         };
         //上传图片
         const uploadUrl = "http://localhost:8080/api/cloud/uploadImg";
@@ -261,7 +261,7 @@ export default {
                 deleteUser(deleteData).then((res)=>{
                     if(res.errorCode == 200){
                         ElMessage.success("删除成功");
-                        tableData.value.splice(index, 1);
+                        getData();
                     }else{
                         ElMessage.warning(res.message);
                     }
@@ -308,10 +308,7 @@ export default {
             updateUser(updateform).then((res)=>{
                 if(res.errorCode == 200){
                     editVisible.value = false;
-                    ElMessage.success(`修改第 ${idx + 1} 行成功`);
-                    Object.keys(updateform).forEach((item) => {
-                        tableData.value[idx][item] = updateform[item];
-                    });
+                    ElMessage.success(`修改成功`); 
                     getData();
                 }else{
                     ElMessage.warning(res.message);
@@ -342,7 +339,6 @@ export default {
         });
         const addUserEdit = () => {
             addUser(addform).then((res)=>{
-                console.log(res.message);
                 if(res.errorCode == 200){
                     addEditVisible.value = false;
                     ElMessage.success(`添加账号成功`);

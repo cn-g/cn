@@ -67,14 +67,14 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="博主昵称" v-if="updateform.blogId">
-                    <el-input v-model="updateform.blogUserName" disabled="true"></el-input>
+                    <el-input v-model="updateform.blogUserName" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="博主头像" v-if="updateform.blogId">
                     <el-image class="table-td-thumb" :src="updateform.blogUserPic" lazy></el-image>
                 </el-form-item>
                 <el-form-item label="发布日期" v-if="updateform.blogId">
                     <el-date-picker type="datetime" placeholder="选择日期" value-format="YYYY-MM-DD hh:mm:ss" v-model="updateform.blogTime"
-                        disabled="true" ></el-date-picker>
+                        :disabled="true" ></el-date-picker>
                 </el-form-item>
                 <el-form-item label="博客图片" v-if="updateform.blogPic">
                     <el-image  class="table-td-thumb" :src="updateform.blogPic" style="width:80%;height:80%" lazy>
@@ -107,14 +107,14 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="博主昵称" v-if="addform.blogId">
-                    <el-input v-model="addform.blogUserName" disabled="true"></el-input>
+                    <el-input v-model="addform.blogUserName" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="博主头像" v-if="addform.blogId">
-                    <el-image class="table-td-thumb" :src="addform.blogUserPic" disabled="true" lazy></el-image>
+                    <el-image class="table-td-thumb" :src="addform.blogUserPic" lazy></el-image>
                 </el-form-item>
                 <el-form-item label="发布日期" v-if="addform.blogId">
                     <el-date-picker type="datetime" placeholder="选择日期" value-format="YYYY-MM-DD hh:mm:ss" v-model="addform.blogTime"
-                        disabled="true" ></el-date-picker>
+                        :disabled="true" ></el-date-picker>
                 </el-form-item>
                 <el-form-item label="博客图片" v-if="addform.blogPic">
                     <el-image  class="table-td-thumb" :src="addform.blogPic" style="width:80%;height:80%" lazy>
@@ -208,12 +208,11 @@ export default {
                 .then(() => {
                     console.log(res.id);
                     deleteRecommend(deleteData).then((res)=>{
-                        console.log(res.message);
                         if(res.errorCode == 200){
                             ElMessage.success("删除成功");
                             getData();
                         }else{
-                            ElMessage.success("删除失败");
+                            ElMessage.warning(res.message);
                         }
                     })
                 })
@@ -255,12 +254,9 @@ export default {
                 if(res.errorCode == 200){
                     editVisible.value = false;
                     ElMessage.success(`修改成功`);
-                    Object.keys(updateform).forEach((item) => {
-                        tableData.value[idx][item] = updateform[item];
-                    });
                     getData();
                 }else{
-                    ElMessage.warning("修改失败");
+                    ElMessage.warning(res.message);
                 }
                 
             });
@@ -337,7 +333,7 @@ export default {
                     ElMessage.success(`添加成功`);
                     getData();
                 }else{
-                    ElMessage.success(`添加失败`);
+                    ElMessage.warning(res.message);
                 }
             });
         };
