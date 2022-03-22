@@ -25,12 +25,12 @@ const routes = [
                 },
                 component: () => import ( /* webpackChunkName: "table" */ "../views/user/Account.vue")
             },{
-                path: "/user",
-                name: "user1",
+                path: "/users",
+                name: "users",
                 meta: {
                     title: '用户管理'
                 },
-                component: () => import ( /* webpackChunkName: "table" */ "../views/user/User.vue")
+                component: () => import ( /* webpackChunkName: "table" */ "../views/user/Users.vue")
             }, {
                 path: "/role",
                 name: "role",
@@ -204,16 +204,19 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    document.title = `${to.meta.title} | vue-manage-system`;
-    const role = localStorage.getItem('ms_username');
-    if (!role && to.path !== '/login') {
+    document.title = `${to.meta.title} | 博客后台管理系统`;
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role_id');
+    if (!token && !role && to.path !== '/login') {
         next('/login');
-    } else if (to.meta.permission) {
-        // 如果是管理员权限则可进入，这里只是简单的模拟管理员权限而已
-        role === 'admin'
-            ? next()
-            : next('/403');
-    } else {
+    } 
+    // else if (to.meta.permission) {
+    //     // 如果是管理员权限则可进入，这里只是简单的模拟管理员权限而已
+    //     token === 'admin'
+    //         ? next()
+    //         : next('/403');
+    // }
+     else {
         next();
     }
 });

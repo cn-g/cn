@@ -7,10 +7,25 @@ export const userLogin = query => {
         params: query
     });
 };
+//保存图片
+export const uploadImg = data => {
+    return request({
+        url: '/cloud/uploadImg',
+        method: 'post',
+        data: data
+    });
+};
 //账号
 export const getAccountPage = query => {
     return request({
         url: '/account/getAccountPage',
+        method: 'get',
+        params: query
+    });
+};
+export const getAccount = query => {
+    return request({
+        url: '/account/getAccount',
         method: 'get',
         params: query
     });
@@ -116,7 +131,6 @@ export const getRoleData = query => {
     });
 };
 //接口
-//角色
 export const getUrlPage = query => {
     return request({
         url: '/url/getUrlPage',

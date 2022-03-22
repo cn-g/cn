@@ -220,7 +220,7 @@ export default {
             addUrl(addform).then((res)=>{
                 if(res.errorCode == 200){
                     addEditVisible.value = false;
-                    ElMessage.success(`添加账号成功`);
+                    ElMessage.success(`添加成功`);
                     getData();
                 }else{
                     ElMessage.warning(res.message);

@@ -10,8 +10,8 @@ const service = axios.create({
 
 service.interceptors.request.use(
     config => {
-        config.headers['token'] = "16451518491977bccb7474b104b5395fae28132617766|1647853035731";
-        config.headers['role_id'] = "16461197675823dd75f2233194189adcb468855b5c343";
+        config.headers['token'] = localStorage.getItem("token")==null?null:localStorage.getItem("token");
+        config.headers['role_id'] = localStorage.getItem("role_id")==null?null:localStorage.getItem("role_id");
         return config;
     },
     error => {
@@ -25,12 +25,10 @@ service.interceptors.response.use(
         if (response.data.errorCode === 200) {
             return response.data;
         } else {
-            console.log(response.data.message);
             Promise.reject();
             return response.data;
         }
-    },
-    error => {
+    },error => {
         console.log(error);
         return Promise.reject();
     }

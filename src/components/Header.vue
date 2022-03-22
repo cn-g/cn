@@ -8,7 +8,7 @@
         <div class="logo">后台管理系统</div>
         <div class="header-right">
             <div class="header-user-con">
-                <!-- 消息中心 -->
+                <!-- 消息中心
                 <div class="btn-bell">
                     <el-tooltip effect="dark" :content="message?`有${message}条未读消息`:`消息中心`" placement="bottom">
                         <router-link to="/tabs">
@@ -16,15 +16,15 @@
                         </router-link>
                     </el-tooltip>
                     <span class="btn-bell-badge" v-if="message"></span>
-                </div>
+                </div> -->
                 <!-- 用户头像 -->
                 <div class="user-avator">
-                    <img src="../assets/img/img.jpg" />
+                    <img :src="userInfo.picUrl" />
                 </div>
                 <!-- 用户名下拉菜单 -->
                 <el-dropdown class="user-name" trigger="click" @command="handleCommand">
                     <span class="el-dropdown-link">
-                        {{username}}
+                        {{userInfo.account}}
                         <i class="el-icon-caret-bottom"></i>
                     </span>
                     <template #dropdown>
@@ -42,13 +42,21 @@
     </div>
 </template>
 <script>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, reactive } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import { getUserRecommendByUserId } from "../api/index";
+import { ElMessage } from 'element-plus';
 export default {
     setup() {
-        const username = localStorage.getItem("ms_username");
+        const userId = localStorage.getItem("userId");
         const message = 2;
+
+        let userInfo = reactive({
+            id:"",
+            account: "",
+            picUrl:""
+        });
 
         const store = useStore();
         const collapse = computed(() => store.state.collapse);
@@ -62,12 +70,29 @@ export default {
                 collapseChage();
             }
         });
+        let idData = reactive({
+            id:"",
+        });
 
+        const getUser = ()=>{
+            idData.id = userId;
+            getUserRecommendByUserId(idData).then((res)=>{
+                if(res.errorCode == 200){
+                    userInfo.id = res.data.blogUserId;
+                    userInfo.account = res.data.blogUserName;
+                    userInfo.picUrl = res.data.blogUserPic;
+                }else{
+                    ElMessage.warning("获取用户信息失败");
+                }
+            });
+        };
+        getUser();
         // 用户名下拉菜单选择事件
         const router = useRouter();
         const handleCommand = (command) => {
             if (command == "loginout") {
-                localStorage.removeItem("ms_username");
+                localStorage.removeItem("token");
+                localStorage.removeItem("role_id");
                 router.push("/login");
             } else if (command == "user") {
                 router.push("/user");
@@ -75,9 +100,11 @@ export default {
         };
 
         return {
-            username,
+            userInfo,
+            userId,
             message,
             collapse,
+            getUser,
             collapseChage,
             handleCommand,
         };
@@ -145,6 +172,7 @@ export default {
 }
 .user-avator {
     margin-left: 20px;
+    margin-right: 10px;
 }
 .user-avator img {
     display: block;

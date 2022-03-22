@@ -1,10 +1,10 @@
 <template>
     <div class="login-wrap">
         <div class="ms-login">
-            <div class="ms-title">后台管理系统</div>
+            <div class="ms-title">博客后台管理系统</div>
             <el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
-                <el-form-item prop="username">
-                    <el-input v-model="param.account" placeholder="username">
+                <el-form-item prop="account">
+                    <el-input v-model="param.account" placeholder="account">
                         <template #prepend>
                             <el-button icon="el-icon-user"></el-button>
                         </template>
@@ -21,7 +21,6 @@
                 <div class="login-btn">
                     <el-button type="primary" @click="submitForm()">登录</el-button>
                 </div>
-                <p class="login-tips">Tips : 用户名和密码随便填。</p>
             </el-form>
         </div>
     </div>
@@ -56,18 +55,25 @@ export default {
         };
         const login = ref(null);
         const submitForm = () => {
-            userLogin(param).then((res) => {
-                if (res.errorCode == 200) {
-                    ElMessage.success("登录成功");
-                    store.dispatch("setToken",res.data.token);
-                    store.dispatch("setRoleId",res.data.roleId);
-                    console.log(res);
-                    //localStorage.setItem("token", param.username);
-                    router.push("/");
-                } else {
+            login.value.validate((valid) => {
+                if(valid){
+                    userLogin(param).then((res) => {
+                        if (res.errorCode == 200) {
+                            ElMessage.success("登录成功");
+                            localStorage.setItem("token", res.data.token);
+                            localStorage.setItem("role_id", res.data.roleId);
+                            localStorage.setItem("userId", res.data.id);
+                            router.push("/");
+                        } else {
+                            ElMessage.error("账号或密码错误");
+                        }
+                    });
+                }else{
                     ElMessage.error("登录失败");
+                    return false;
                 }
             });
+            
         };
 
         const store = useStore();

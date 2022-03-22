@@ -176,7 +176,7 @@ import { updateUser, addUser, getUserPage, deleteUser, getAccountData} from "../
 import { regionData } from 'element-china-area-data'
 
 export default {
-    name: "user1",
+    name: "users",
     setup() {
         const query = reactive({
             realName:"",

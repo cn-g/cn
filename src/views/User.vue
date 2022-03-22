@@ -66,13 +66,14 @@ import { reactive, ref } from "vue";
 import VueCropper from "vue-cropperjs";
 import "cropperjs/dist/cropper.css";
 import avatar from "../assets/img/img.jpg";
+import { uploadImg,getUserRecommendByUserId } from "../api/index";
 export default {
     name: "user",
     components: {
         VueCropper,
     },
     setup() {
-        const name = localStorage.getItem("ms_username");
+        const name = '';
         const form = reactive({
             old: "",
             new: "",
@@ -80,12 +81,30 @@ export default {
         });
         const onSubmit = () => {};
 
-        const avatarImg = ref(avatar);
+        let idData = reactive({
+            id:"",
+        });
+        const avatarImg = ref("");
+        const getUser = ()=>{
+            idData.id = localStorage.getItem("userId");
+            getUserRecommendByUserId(idData).then((res)=>{
+                if(res.errorCode == 200){
+                    name = res.data.blogUserName;
+                    avatarImg.value = res.data.blogUserPic;
+                    console.log(avatarImg.value);
+                }else{
+                    ElMessage.warning("获取用户信息失败");
+                }
+            });
+            
+        };
+        getUser();
+        
         const imgSrc = ref("");
         const cropImg = ref("");
         const dialogVisible = ref(false);
         const cropper = ref(null);
-
+ 
         const showDialog = () => {
             dialogVisible.value = true;
             imgSrc.value = avatarImg.value;
@@ -96,12 +115,18 @@ export default {
             if (!file.type.includes("image/")) {
                 return;
             }
+            uploadImg(file).then((res)=>{
+                if(res.errorCode == 200){
+                    avatarImg.value = res.data;
+                }
+            });
             const reader = new FileReader();
             reader.onload = (event) => {
                 dialogVisible.value = true;
-                imgSrc.value = event.target.result;
-                cropper.value && cropper.value.replace(event.target.result);
+                imgSrc.value = avatarImg.value;
+                cropper.value && cropper.value.replace(avatarImg.value);
             };
+
             reader.readAsDataURL(file);
         };
 
@@ -115,6 +140,7 @@ export default {
         };
 
         return {
+            idData,
             name,
             form,
             onSubmit,
@@ -127,6 +153,7 @@ export default {
             setImage,
             cropImage,
             saveAvatar,
+            getUser
         };
     },
 };

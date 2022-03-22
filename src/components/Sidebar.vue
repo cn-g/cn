@@ -53,7 +53,7 @@ export default {
                         title: "账号管理",
                     },
                     {
-                        index: "/user",
+                        index: "/users",
                         title: "用户管理",
                     },
                     {
