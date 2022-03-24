@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { inject } from 'vue';
+import router from '../router';
 
 const service = axios.create({
     //process.env.NODE_ENV === 'development', //来判断是否开发环境
@@ -24,6 +26,10 @@ service.interceptors.response.use(
     response => {
         if (response.data.errorCode === 200) {
             return response.data;
+        }else if(response.data.errorCode === 401){
+            localStorage.removeItem("token");
+            localStorage.removeItem("role_id");
+            router.go(0);
         } else {
             Promise.reject();
             return response.data;

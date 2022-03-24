@@ -77,7 +77,7 @@
                         :action=uploadUrl 
                         auto-upload 
                         :on-success="uploadSuccess" >
-                        <el-image v-if="updateform.picUrl" class="table-td-thumb" :src="updateform.picUrl" fit="fill" lazy>
+                        <el-image v-if="updateform.picUrl" class="table-td-thumb" :src="updateform.picUrl" fit="fill" style="width:100%;height:100%" lazy>
                         </el-image>
                         <i v-else class="el-icon-upload"></i>
                         <div v-if="!updateform.picUrl" >
@@ -136,7 +136,7 @@
                         :action=uploadUrl 
                         auto-upload
                         :on-success="uploadSuccess">
-                        <el-image v-if="addform.picUrl" :src="addform.picUrl" fit="fill" style="width:100%;height:100%" lazy>
+                        <el-image v-if="addform.picUrl" class="table-td-thumb" :src="addform.picUrl" :fit="fill" style="width:100%;height:100%" lazy>
                         </el-image>
                         <i v-else class="el-icon-upload"></i>
                         <div v-if="!addform.picUrl">
@@ -249,7 +249,12 @@ export default {
         //上传图片
         const uploadUrl = "http://localhost:8080/api/cloud/uploadImg";
         const uploadSuccess = (res)=>{
-            addform.picUrl = res.data;
+            if(addEditVisible){
+                addform.picUrl = res.data;
+            }
+            if(editVisible){
+                updateform.picUrl = res.data;
+            }
         }
         // 删除操作
         const handleDelete = (index,row) => {

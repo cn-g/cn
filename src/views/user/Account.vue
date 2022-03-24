@@ -48,7 +48,7 @@
                     <el-input v-model="updateform.account"></el-input>
                 </el-form-item>
                 <el-form-item label="密码">
-                    <el-input v-model="updateform.password"></el-input>
+                    <el-input type="password" v-model="updateform.password"></el-input>
                 </el-form-item>
                 <el-form-item label="角色" prop="region">
                     <el-select v-model="updateform.roleId" placeholder="请选择">
@@ -79,7 +79,7 @@
                     <el-input v-model="addform.account"></el-input>
                 </el-form-item>
                 <el-form-item label="密码">
-                    <el-input v-model="addform.password"></el-input>
+                    <el-input type="password" v-model="addform.password"></el-input>
                 </el-form-item>
                 <el-form-item label="角色" prop="region">
                     <el-select v-model="addform.roleId" placeholder="请选择">

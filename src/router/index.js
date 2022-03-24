@@ -207,16 +207,9 @@ router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title} | 博客后台管理系统`;
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role_id');
-    if (!token && !role && to.path !== '/login') {
+    if (token == null && role==null && to.path !== '/login') {
         next('/login');
-    } 
-    // else if (to.meta.permission) {
-    //     // 如果是管理员权限则可进入，这里只是简单的模拟管理员权限而已
-    //     token === 'admin'
-    //         ? next()
-    //         : next('/403');
-    // }
-     else {
+    } else {
         next();
     }
 });

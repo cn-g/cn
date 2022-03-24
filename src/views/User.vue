@@ -1,7 +1,7 @@
 <template>
     <div>
-        <el-row :gutter="20">
-            <el-col :span="12">
+        <el-row :gutter="40">
+            <!-- <el-col :span="12"> -->
                 <el-card shadow="hover">
                     <template #header>
                         <div class="clearfix">
@@ -9,89 +9,151 @@
                         </div>
                     </template>
                     <div class="info">
-                        <div class="info-image" @click="showDialog">
-                            <img :src="avatarImg" />
-                            <span class="info-edit">
+                        <div class="info-image" >
+                            <el-upload class="upload-demo" 
+                                :action=uploadUrl 
+                                auto-upload
+                                :on-success="uploadSuccess">
+                                <img :src="userInfo.picUrl" v-if="userInfo.picUrl"/>
+                                <span class="info-edit">
                                 <i class="el-icon-lx-camerafill"></i>
-                            </span>
+                               </span>
+                            </el-upload>
                         </div>
-                        <div class="info-name">{{ name }}</div>
+                        <div class="info-name" > 
+                            <span>{{ userInfo.account }}</span> 
+                        </div>
                         <div class="info-desc">不可能！我的代码怎么可能会有bug！</div>
                     </div>
                 </el-card>
-            </el-col>
-            <el-col :span="12">
-                <el-card shadow="hover">
+        </el-row>
+        <el-row :gutter="40">
+                <el-card shadow="hover" v-if="aditStatus">
                     <template #header>
                         <div class="clearfix">
-                            <span>账户编辑</span>
+                            <span>账号编辑</span>
+                            <span>完成</span>
                         </div>
                     </template>
-                    <el-form label-width="90px">
-                        <el-form-item label="用户名："> {{ name }} </el-form-item>
+                    <el-form label-width="90px" >
+                        <el-form-item label="用户名："> 
+                            <el-input v-model="accountform.account"></el-input>
+                        </el-form-item>
                         <el-form-item label="旧密码：">
-                            <el-input type="password" v-model="form.old"></el-input>
+                            <el-input type="password" v-model="accountform.oldPassword"></el-input>
                         </el-form-item>
                         <el-form-item label="新密码：">
-                            <el-input type="password" v-model="form.new"></el-input>
+                            <el-input type="password" v-model="accountform.password"></el-input>
                         </el-form-item>
-                        <el-form-item label="个人简介：">
-                            <el-input v-model="form.desc"></el-input>
+                        <el-form-item label="手机号：">
+                            <el-input v-model="accountform.phone"></el-input>
                         </el-form-item>
-                        <el-form-item>
-                            <el-button type="primary" @click="onSubmit">保存</el-button>
+                        <el-form-item label="QQ号：">
+                            <el-input v-model="accountform.qqNumber"></el-input>
+                        </el-form-item>
+                        <el-form-item label="微信号：">
+                            <el-input v-model="accountform.weChat"></el-input>
                         </el-form-item>
                     </el-form>
                 </el-card>
-            </el-col>
+                <el-card shadow="hover" v-else>
+                    <template #header>
+                        <div class="clearfix">
+                            <span>账号信息</span>
+                            <el-button type="primary" icon="el-icon-edit" @click="changeUpdate"></el-button>
+                        </div>
+                    </template>
+                    <el-form label-width="90px" >
+                        <el-form-item label="用户名："> 
+                            {{ accountform.account }} 
+                        </el-form-item>
+                        <el-form-item label="手机号：">
+                            {{ accountform.phone }}
+                        </el-form-item>
+                        <el-form-item label="QQ号：">
+                            {{ accountform.qqNumber }}
+                        </el-form-item>
+                        <el-form-item label="微信号：">
+                            {{ accountform.weChat }}
+                        </el-form-item>
+                    </el-form>
+                </el-card>
         </el-row>
-        <el-dialog title="裁剪图片" v-model="dialogVisible" width="600px">
-            <vue-cropper ref="cropper" :src="imgSrc" :ready="cropImage" :zoom="cropImage" :cropmove="cropImage"
-                style="width: 100%; height: 400px"></vue-cropper>
-
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button class="crop-demo-btn" type="primary">选择图片
-                        <input class="crop-input" type="file" name="image" accept="image/*" @change="setImage" />
-                    </el-button>
-                    <el-button type="primary" @click="saveAvatar">上传并保存</el-button>
-                </span>
-            </template>
-        </el-dialog>
     </div>
 </template>
 
 <script>
 import { reactive, ref } from "vue";
-import VueCropper from "vue-cropperjs";
 import "cropperjs/dist/cropper.css";
-import avatar from "../assets/img/img.jpg";
-import { uploadImg,getUserRecommendByUserId } from "../api/index";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { getUserRecommendByUserId,updateUser } from "../api/index";
+import router from '../router';
 export default {
     name: "user",
-    components: {
-        VueCropper,
-    },
     setup() {
-        const name = '';
         const form = reactive({
             old: "",
             new: "",
-            desc: "不可能！我的代码怎么可能会有bug！",
+            desc: "",
         });
         const onSubmit = () => {};
+        let userform = reactive({
+            id:"",
+            realName:null,
+            picUrl:"",
+            sex:null,
+            synopsis:null,
+            areaName:null,
+            provinceCode:"",
+            cityCode:"",
+            areaCode:"",
+            birthday:"",
+            nativePlace:null,
+            status:null
+        });
+        //基础信息
+        let userInfo = reactive({
+            id:"",
+            account: "",
+            picUrl:""
+        });
+        //账号信息
+        let accountform = reactive({
+            id:"",
+            account: "",
+            oldPassword:"",
+            password:"",
+            phone: "",
+            qqNumber:"",
+            weChat:"",
+        });
+        //上传图片
+        const uploadUrl = "http://localhost:8080/api/cloud/uploadImg";
+        const uploadSuccess = (res)=>{
+            userInfo.picUrl = res.data;
+            userform.id = localStorage.getItem("userId");
+            userform.picUrl = res.data;
+            updateUser(userform).then((res)=>{
+                if(res.errorCode == 200){
+                    router.go(0);
+                    ElMessage.success("修改头像成功");
+                }else{
+                    ElMessage.warning("修改头像失败");
+                }
+            })
+        }
 
         let idData = reactive({
             id:"",
         });
-        const avatarImg = ref("");
+        const aditStatus = ref(false);
         const getUser = ()=>{
             idData.id = localStorage.getItem("userId");
             getUserRecommendByUserId(idData).then((res)=>{
                 if(res.errorCode == 200){
-                    name = res.data.blogUserName;
-                    avatarImg.value = res.data.blogUserPic;
-                    console.log(avatarImg.value);
+                    userInfo.id = res.data.blogUserId;
+                    userInfo.account = res.data.blogUserName;
+                    userInfo.picUrl = res.data.blogUserPic;
                 }else{
                     ElMessage.warning("获取用户信息失败");
                 }
@@ -99,61 +161,23 @@ export default {
             
         };
         getUser();
-        
-        const imgSrc = ref("");
-        const cropImg = ref("");
-        const dialogVisible = ref(false);
-        const cropper = ref(null);
- 
-        const showDialog = () => {
-            dialogVisible.value = true;
-            imgSrc.value = avatarImg.value;
-        };
-
-        const setImage = (e) => {
-            const file = e.target.files[0];
-            if (!file.type.includes("image/")) {
-                return;
-            }
-            uploadImg(file).then((res)=>{
-                if(res.errorCode == 200){
-                    avatarImg.value = res.data;
-                }
-            });
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                dialogVisible.value = true;
-                imgSrc.value = avatarImg.value;
-                cropper.value && cropper.value.replace(avatarImg.value);
-            };
-
-            reader.readAsDataURL(file);
-        };
-
-        const cropImage = () => {
-            cropImg.value = cropper.value.getCroppedCanvas().toDataURL();
-        };
-
-        const saveAvatar = () => {
-            avatarImg.value = cropImg.value;
-            dialogVisible.value = false;
-        };
+        const changeUpdate = ()=>{
+            console.log("点击")
+            aditStatus.value = true;
+        }
 
         return {
+            accountform,
+            userform,
+            uploadUrl,
+            uploadSuccess,
+            aditStatus,
             idData,
-            name,
+            userInfo,
             form,
             onSubmit,
-            cropper,
-            avatarImg,
-            imgSrc,
-            cropImg,
-            showDialog,
-            dialogVisible,
-            setImage,
-            cropImage,
-            saveAvatar,
-            getUser
+            getUser,
+            changeUpdate
         };
     },
 };
@@ -215,5 +239,26 @@ export default {
     top: 0;
     opacity: 0;
     cursor: pointer;
+}
+:deep(.el-upload) {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+*{
+    margin: auto;
+}
+:deep(.el-card){
+    width: 60%;
+}
+:deep(.el-row){
+    margin-top: 10px;
+}
+:deep(.el-button){
+    position: relative;
+    left: 80%;
+    color: #100e0f;
+    background-color: #e7ecef00;
+    border-color: #409eff08;
 }
 </style>
