@@ -66,6 +66,13 @@ export const getUserPage = query => {
         params: query
     });
 };
+export const getUser = query => {
+    return request({
+        url: '/user/getUser',
+        method: 'get',
+        params: query
+    });
+};
 export const addUser = data => {
     return request({
         url: '/user/addUser',

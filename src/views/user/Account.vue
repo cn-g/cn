@@ -206,9 +206,11 @@ export default {
             });
             
         };
-
+        let nameData = reactive({
+            name:"",
+        })
         const selectRoleDate = ()=>{
-            getRoleData().then((res)=>{
+            getRoleData(nameData).then((res)=>{
                 selectDate.value = res.data;
             })
         };
@@ -244,6 +246,7 @@ export default {
 
 
         return {
+            nameData,
             query,
             tableData,
             pageTotal,
