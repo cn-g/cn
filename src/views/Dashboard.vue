@@ -4,25 +4,21 @@
             <el-col :span="8">
                 <el-card shadow="hover" class="mgb20" style="height:252px;">
                     <div class="user-info">
-                        <img src="../assets/img/img.jpg" class="user-avator" alt />
+                        <img :src="accountform.picUrl" class="user-avator" alt />
                         <div class="user-info-cont">
-                            <div class="user-info-name">{{ name }}</div>
-                            <div>{{ role }}</div>
+                            <div class="user-info-name">{{ accountform.account }}</div>
+                            <div>{{ accountform.roleName }}</div>
                         </div>
                     </div>
                     <div class="user-info-list">
                         上次登录时间：
-                        <span>2019-11-01</span>
-                    </div>
-                    <div class="user-info-list">
-                        上次登录地点：
-                        <span>东莞</span>
+                        <span>{{ accountform.lastTime }}</span>
                     </div>
                 </el-card>
                 <el-card shadow="hover" style="height:252px;">
                     <template #header>
                         <div class="clearfix">
-                            <span>语言详情</span>
+                            <span>类目博客占比</span>
                         </div>
                     </template>
                     Vue
@@ -39,8 +35,8 @@
                             <div class="grid-content grid-con-1">
                                 <i class="el-icon-user-solid grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">1234</div>
-                                    <div>用户访问量</div>
+                                    <div class="grid-num">{{ accountform.userNumber }}</div>
+                                    <div>用户总数</div>
                                 </div>
                             </div>
                         </el-card>
@@ -50,8 +46,8 @@
                             <div class="grid-content grid-con-2">
                                 <i class="el-icon-message-solid grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">321</div>
-                                    <div>系统消息</div>
+                                    <div class="grid-num">{{ accountform.viewNumber }}</div>
+                                    <div>博客浏览总数</div>
                                 </div>
                             </div>
                         </el-card>
@@ -61,18 +57,31 @@
                             <div class="grid-content grid-con-3">
                                 <i class="el-icon-s-goods grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">5000</div>
-                                    <div>数量</div>
+                                    <div class="grid-num">{{ accountform.essayNumber }}</div>
+                                    <div>博客总数</div>
                                 </div>
                             </div>
                         </el-card>
                     </el-col>
                 </el-row>
+            <el-dialog title="添加待办事项" v-model="addEditVisible" width="20%">
+                <el-form label-width="70px">
+                    <el-form-item label="事项描述">
+                        <el-input type="textarea" rows="1" v-model="thingData.thing"></el-input>
+                    </el-form-item>
+                </el-form>
+                <template #footer>
+                    <span class="dialog-footer">
+                        <el-button @click="addEditVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="addThingEdit">确 定</el-button>
+                    </span>
+                </template>
+            </el-dialog>
                 <el-card shadow="hover" style="height:403px;">
                     <template #header>
                         <div class="clearfix">
                             <span>待办事项</span>
-                            <el-button style="float: right; padding: 3px 0" type="text">添加</el-button>
+                            <el-button style="float: right; padding: 3px 0" type="text" @click="addthing">添加</el-button>
                         </div>
                     </template>
 
@@ -116,13 +125,13 @@
 
 <script>
 import Schart from "vue-schart";
-import { reactive } from "vue";
+import { ref,reactive } from "vue";
+import { getAccount,getThingList,addThing,updateThing } from "../api/index";
+import { ElMessage, ElMessageBox } from "element-plus";
 export default {
     name: "dashboard",
     components: { Schart },
     setup() {
-        const name = localStorage.getItem("ms_username");
-        const role = name === "admin" ? "超级管理员" : "普通用户";
 
         const data = reactive([
             {
@@ -157,21 +166,21 @@ export default {
         const options = {
             type: "bar",
             title: {
-                text: "最近一周各品类销售图",
+                text: "最近一周各类目浏览树状图",
             },
             xRorate: 25,
             labels: ["周一", "周二", "周三", "周四", "周五"],
             datasets: [
                 {
-                    label: "家电",
+                    label: "Java",
                     data: [234, 278, 270, 190, 230],
                 },
                 {
-                    label: "百货",
+                    label: "C++",
                     data: [164, 178, 190, 135, 160],
                 },
                 {
-                    label: "食品",
+                    label: "python",
                     data: [144, 198, 150, 235, 120],
                 },
             ],
@@ -179,20 +188,20 @@ export default {
         const options2 = {
             type: "line",
             title: {
-                text: "最近几个月各品类销售趋势图",
+                text: "最近几个月各类目浏览趋势图",
             },
             labels: ["6月", "7月", "8月", "9月", "10月"],
             datasets: [
                 {
-                    label: "家电",
+                    label: "Java",
                     data: [234, 278, 270, 190, 230],
                 },
                 {
-                    label: "百货",
+                    label: "C++",
                     data: [164, 178, 150, 135, 160],
                 },
                 {
-                    label: "食品",
+                    label: "python",
                     data: [74, 118, 200, 235, 90],
                 },
             ],
@@ -223,14 +232,70 @@ export default {
                 status: true,
             },
         ]);
-
+        //账号信息
+        let accountform = reactive({
+            id:"",
+            account: "",
+            phone: "",
+            picUrl:"",
+            lastTime:"",
+            roleName:"",
+            essayNumber:"",
+            userNumber:"",
+            viewNumber:""
+        });
+        let idData = reactive({
+            id:"",
+        });
+        let thingData = reactive({
+            thing:null,
+        });
+        const addEditVisible = ref(false);
+        const addthing = ()=>{
+            addEditVisible.value = true;
+        };
+        const addThingEdit = ()=>{
+            addThing(thingData).then((res)=>{
+                if(res.errorCode == 200){
+                    ElMessage.success("添加待办事项成功");
+                }else{
+                    ElMessage.warning(res.message);
+                }
+            });
+            addEditVisible.value = false;
+        };
+        const getUserInfo=()=>{
+            idData.id = localStorage.getItem("userId");
+            getAccount(idData).then((res)=>{
+                if(res.errorCode == 200){
+                    accountform.id = res.data.id;
+                    accountform.account = res.data.account;
+                    accountform.phone = res.data.phone;
+                    accountform.lastTime = res.data.lastTime;
+                    accountform.roleName = res.data.roleName;
+                    accountform.picUrl = res.data.picUrl;
+                    accountform.essayNumber = res.data.essayNumber;
+                    accountform.userNumber = res.data.userNumber;
+                    accountform.viewNumber = res.data.viewNumber;
+                }else{
+                    ElMessage.warning(res.message);
+                }
+            });
+        };
+        getUserInfo();
         return {
-            name,
+            thingData,
+            accountform,
             data,
             options,
             options2,
             todoList,
-            role,
+            idData,
+            addEditVisible,
+            addThingEdit,
+            addthing,
+            getUserInfo,
+            
         };
     },
 };

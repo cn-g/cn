@@ -85,6 +85,11 @@
                         </div>
                     </el-upload>
                 </el-form-item>
+                <el-form-item label="类目" prop="region">
+                    <el-select v-model="updateform.categories" placeholder="请选择" multiple>
+                        <el-option v-for="category in selectDate" :key="category.id" :label="category.name" :value="category.id"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="出生日期">
                         <el-date-picker type="date" placeholder="选择日期" value-format="YYYY-MM-DD" v-model="updateform.birthday"
                             style="width: 100%;"></el-date-picker>
@@ -144,6 +149,11 @@
                         </div>
                     </el-upload>
                 </el-form-item>
+                <el-form-item label="类目" prop="region">
+                    <el-select v-model="addform.categories" placeholder="请选择" multiple>
+                        <el-option v-for="category in selectDate" :key="category.id" :label="category.name" :value="category.id"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="出生日期">
                     <el-date-picker type="date" placeholder="选择日期" value-format="YYYY-MM-DD" v-model="addform.birthday"
                         style="width: 100%;"></el-date-picker>
@@ -172,7 +182,7 @@
 <script>
 import { ref, reactive } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { updateUser, addUser, getUserPage, deleteUser, getAccountData} from "../../api/index";
+import { updateUser, addUser, getUserPage, deleteUser, getAccountData, getCategoryData} from "../../api/index";
 import { regionData } from 'element-china-area-data'
 
 export default {
@@ -204,7 +214,13 @@ export default {
             });
         };
         getData();
-
+        const selectCategoryDate = ()=>{
+            getCategoryData().then((res)=>{
+                selectDate.value = res.data;
+            });
+        };
+        selectCategoryDate();
+        const selectDate = ref([]);
         // 查询操作
         const handleSearch = () => {
             query.page = 1;
@@ -298,6 +314,7 @@ export default {
             areaCode:"",
             birthday:"",
             nativePlace:"",
+            categories:[],
             status:null
         });
         let idx = -1;
@@ -340,6 +357,7 @@ export default {
             areaCode:"",
             birthday:"",
             nativePlace:"",
+            categories:[],
             status:null
         });
         const addUserEdit = () => {
@@ -378,6 +396,8 @@ export default {
             handleEdit,
             addUserEdit,
             updateEdit,
+            selectCategoryDate,
+            selectDate
         };
     },
 };

@@ -419,3 +419,25 @@ export const deleteUserRecommend = data => {
         data: data
     });
 };
+//待办事项
+export const getThingList = query => {
+    return request({
+        url: '/thing/getThingList',
+        method: 'get',
+        params: query
+    });
+};
+export const addThing = data => {
+    return request({
+        url: '/thing/addThing',
+        method: 'post',
+        data: data
+    });
+};
+export const updateThing = data => {
+    return request({
+        url: '/thing/updateThing',
+        method: 'post',
+        data: data
+    });
+};
