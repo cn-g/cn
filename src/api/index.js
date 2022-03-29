@@ -274,6 +274,13 @@ export const getEssay = query => {
         params: query
     });
 };
+export const getEssayRatio = query => {
+    return request({
+        url: '/essay/getEssayRatio',
+        method: 'get',
+        params: query
+    });
+};
 //轮播
 export const getChannelPage = query => {
     return request({

@@ -15,17 +15,35 @@
                         <span>{{ accountform.lastTime }}</span>
                     </div>
                 </el-card>
-                <el-card shadow="hover" style="height:252px;">
+                <el-card shadow="hover" style="height:550px;">
                     <template #header>
                         <div class="clearfix">
                             <span>类目博客占比</span>
                         </div>
                     </template>
-                    Vue
+                    <el-table :show-header="false" :data="ratioList" style="width:100%;">
+                        <el-table-column width="50">
+                            <template #default="scope">
+                                {{ scope.row.id }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column>
+                            <template #default="scope">
+                                <el-progress :percentage="scope.row.name" :color="colorlists[Math.floor(Math.random()*10)]"></el-progress>
+                            </template>
+                        </el-table-column>
+                        <!-- <el-table-column width="60">
+                            <template>
+                                <i class="el-icon-edit"></i>
+                                <i class="el-icon-delete"></i>
+                            </template>
+                        </el-table-column> -->
+                    </el-table>
+                    <!-- Vue
                     <el-progress :percentage="71.3" color="#42b983"></el-progress>JavaScript
                     <el-progress :percentage="24.1" color="#f1e05a"></el-progress>CSS
                     <el-progress :percentage="13.7"></el-progress>HTML
-                    <el-progress :percentage="5.9" color="#f56c6c"></el-progress>
+                    <el-progress :percentage="5.9" color="#f56c6c"></el-progress> -->
                 </el-card>
             </el-col>
             <el-col :span="16">
@@ -44,7 +62,7 @@
                     <el-col :span="8">
                         <el-card shadow="hover" :body-style="{ padding: '0px' }">
                             <div class="grid-content grid-con-2">
-                                <i class="el-icon-message-solid grid-con-icon"></i>
+                                <i class="el-icon-monitor grid-con-icon"></i>
                                 <div class="grid-cont-right">
                                     <div class="grid-num">{{ accountform.viewNumber }}</div>
                                     <div>博客浏览总数</div>
@@ -55,7 +73,7 @@
                     <el-col :span="8">
                         <el-card shadow="hover" :body-style="{ padding: '0px' }">
                             <div class="grid-content grid-con-3">
-                                <i class="el-icon-s-goods grid-con-icon"></i>
+                                <i class="el-icon-document-copy grid-con-icon"></i>
                                 <div class="grid-cont-right">
                                     <div class="grid-num">{{ accountform.essayNumber }}</div>
                                     <div>博客总数</div>
@@ -77,7 +95,7 @@
                     </span>
                 </template>
             </el-dialog>
-                <el-card shadow="hover" style="height:403px;">
+                <el-card shadow="hover" style="height:700px;">
                     <template #header>
                         <div class="clearfix">
                             <span>待办事项</span>
@@ -88,14 +106,14 @@
                     <el-table :show-header="false" :data="todoList" style="width:100%;">
                         <el-table-column width="40">
                             <template #default="scope">
-                                <el-checkbox v-model="scope.row.status"></el-checkbox>
+                                <el-checkbox v-model="scope.row.status" @change="handleCheck(scope.row.id)"></el-checkbox>
                             </template>
                         </el-table-column>
                         <el-table-column>
                             <template #default="scope">
                                 <div class="todo-item" :class="{
-                                        'todo-item-del': scope.row.status,
-                                    }">{{ scope.row.title }}</div>
+                                        'todo-item-del': scope.row.status
+                                    }">{{ scope.row.thing }}</div>
                             </template>
                         </el-table-column>
                         <el-table-column width="60">
@@ -108,7 +126,7 @@
                 </el-card>
             </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <!-- <el-row :gutter="20">
             <el-col :span="12">
                 <el-card shadow="hover">
                     <schart ref="bar" class="schart" canvasId="bar" :options="options"></schart>
@@ -119,14 +137,14 @@
                     <schart ref="line" class="schart" canvasId="line" :options="options2"></schart>
                 </el-card>
             </el-col>
-        </el-row>
+        </el-row> -->
     </div>
 </template>
 
 <script>
 import Schart from "vue-schart";
 import { ref,reactive } from "vue";
-import { getAccount,getThingList,addThing,updateThing } from "../api/index";
+import { getAccount,getThingList,addThing,updateThing,getEssayRatio } from "../api/index";
 import { ElMessage, ElMessageBox } from "element-plus";
 export default {
     name: "dashboard",
@@ -185,6 +203,11 @@ export default {
                 },
             ],
         };
+        const colorlists = [
+            'rgb(229, 0, 19)','rgb(206,194,28)','rgb(0,161,233)','rgb(109,185,45)',
+            'rgb(166,0,130)','rgb(237,108,0)','rgb(240, 28, 131)', 'rgb(84, 21, 226)',
+            'rgb( 0,128,0)','rgb( 255,69,0)','rgb( 255,165,0)','rgb( 178,34,34)',
+            'rgb( 255,0,255)','rgb(65,105,225)','blueviolet']
         const options2 = {
             type: "line",
             title: {
@@ -206,32 +229,34 @@ export default {
                 },
             ],
         };
-        const todoList = reactive([
-            {
-                title: "今天要修复100个bug",
-                status: false,
-            },
-            {
-                title: "今天要修复100个bug",
-                status: false,
-            },
-            {
-                title: "今天要写100行代码加几个bug吧",
-                status: false,
-            },
-            {
-                title: "今天要修复100个bug",
-                status: false,
-            },
-            {
-                title: "今天要修复100个bug",
-                status: true,
-            },
-            {
-                title: "今天要写100行代码加几个bug吧",
-                status: true,
-            },
-        ]);
+        // const statusData = reactive({
+        //     '1':false,
+        //     '9':true,
+        // });
+        const ratioList = ref([]);
+        const getRatio = ()=>{
+            getEssayRatio().then((res)=>{
+                if(res.errorCode == 200){
+                    ratioList.value = res.data;
+                    console.log(ratioList);
+                }else{
+                    ElMessage.warning(res.message);
+                }
+            });
+        };
+        getRatio();
+        const todoList = ref([]);
+        const getThing = ()=>{
+            getThingList().then((res)=>{
+                if(res.errorCode == 200){
+                    todoList.value = res.data;
+                    console.log(todoList);
+                }else{
+                    ElMessage.warning(res.message);
+                }
+            });
+        };
+        getThing();
         //账号信息
         let accountform = reactive({
             id:"",
@@ -258,11 +283,22 @@ export default {
             addThing(thingData).then((res)=>{
                 if(res.errorCode == 200){
                     ElMessage.success("添加待办事项成功");
+                    getThing();
                 }else{
                     ElMessage.warning(res.message);
                 }
             });
             addEditVisible.value = false;
+        };
+        const handleCheck = (id)=>{
+            idData.id = id;
+            updateThing(idData).then((res)=>{
+                if(res.errorCode == 200){
+                    ElMessage.success("操作事项成功");
+                }else{
+                    ElMessage.warning(res.message);
+                }
+            });
         };
         const getUserInfo=()=>{
             idData.id = localStorage.getItem("userId");
@@ -284,6 +320,7 @@ export default {
         };
         getUserInfo();
         return {
+            colorlists,
             thingData,
             accountform,
             data,
@@ -291,10 +328,14 @@ export default {
             options2,
             todoList,
             idData,
+            ratioList,
             addEditVisible,
+            getRatio,
+            getThing,
             addThingEdit,
             addthing,
             getUserInfo,
+            handleCheck
             
         };
     },
