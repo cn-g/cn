@@ -39,6 +39,7 @@ export default {
         const param = reactive({
             account: "",
             password: "",
+            type:2
         });
 
         const rules = {

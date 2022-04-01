@@ -25,6 +25,11 @@
                         <el-tag type='success'>{{ scope.row.roleName }}</el-tag>
                     </template>
                 </el-table-column>
+                <el-table-column label="用户类型" align="center">
+                    <template #default="scope">
+                        <el-tag :type="scope.row.type === 1?'success':scope.row.type === 0?'danger':''">{{ typeData[scope.row.type] }}</el-tag>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="createTime" label="创建时间"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template #default="scope">
@@ -86,6 +91,10 @@
                         <el-option v-for="role in selectDate" :key="role.id" :label="role.name" :value="role.id"></el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="用户类型">
+                    <el-radio v-model="addform.type" :label="1">前台</el-radio>
+                    <el-radio v-model="addform.type" :label="2">后台</el-radio>
+                </el-form-item>
                 <el-form-item label="手机号">
                     <el-input v-model="addform.phone"></el-input>
                 </el-form-item>
@@ -124,6 +133,10 @@ export default {
         });
         const tableData = ref([]);
         const pageTotal = ref(0);
+        const typeData = reactive({
+            '1':'前台用户',
+            '2':'后台用户',
+        });
         // 获取表格数据
         const getData = () => {
             getAccountPage(query).then((res) => {
@@ -229,6 +242,7 @@ export default {
             phone: "",
             qqNumber:"",
             weChat:"",
+            type:null
         });
         const addAccountEdit = () => {
             addAccount(addform).then((res)=>{
@@ -246,6 +260,7 @@ export default {
 
 
         return {
+            typeData,
             nameData,
             query,
             tableData,
