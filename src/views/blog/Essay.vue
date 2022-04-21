@@ -251,7 +251,7 @@ export default {
         };
 
         //上传图片
-        const uploadUrl = "http://localhost:8080/api/cloud/uploadImg";
+        const uploadUrl = "http://127.0.0.1:7089/cloud/uploadImg";
         const uploadSuccess = (res)=>{
             addform.picUrl = res.data;
             updateform.picUrl = res.data;

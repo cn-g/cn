@@ -21,6 +21,7 @@
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="name" label="操作名"></el-table-column>
                 <el-table-column prop="operateDesc" label="操作描述"></el-table-column>
+                <el-table-column prop="operateNo" label="操作编号"></el-table-column>
                 <el-table-column label="状态" align="center">
                     <template #default="scope">
                         <el-tag :type="scope.row.status === 1?'success':scope.row.status === 0?'danger':''">{{ statusData[scope.row.status] }}</el-tag>
@@ -51,6 +52,9 @@
                 <el-form-item label="操作描述">
                     <el-input v-model="updateform.operateDesc"></el-input>
                 </el-form-item>
+                <el-form-item label="操作编号">
+                    <el-input v-model="updateform.operateNo"></el-input>
+                </el-form-item>
                 <el-form-item label="状态">
                     <el-radio v-model="updateform.status" :label="0">禁用</el-radio>
                     <el-radio v-model="updateform.status" :label="1">启用</el-radio>
@@ -71,6 +75,9 @@
                 </el-form-item>
                 <el-form-item label="操作描述">
                     <el-input v-model="addform.operateDesc"></el-input>
+                </el-form-item>
+                <el-form-item label="操作编号">
+                    <el-input v-model="addform.operateNo"></el-input>
                 </el-form-item>
                 <el-form-item label="状态">
                     <el-radio v-model="addform.status" :label="0">禁用</el-radio>
@@ -165,7 +172,8 @@ export default {
             id:"",
             name:"",
             operateDesc:"",
-            status:null
+            status:null,
+            operateNo:null
         });
         let idx = -1;
         const handleEdit = (index, row) => {
@@ -196,7 +204,8 @@ export default {
         let addform = reactive({
             name:"",
             operateDesc:"",
-            status:null
+            status:null,
+            operateNo:null
         });
         const addOperateEdit = () => {
             addOperate(addform).then((res)=>{

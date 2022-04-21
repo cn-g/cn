@@ -36,11 +36,11 @@
 import { computed, onMounted, reactive } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { getUserRecommendByUserId } from "../api/index";
+import { getAccount } from "../api/index";
 import { ElMessage } from 'element-plus';
 export default {
     setup() {
-        const userId = localStorage.getItem("userId");
+        const userId = localStorage.getItem("user_id");
         const message = 2;
 
         let userInfo = reactive({
@@ -67,11 +67,10 @@ export default {
 
         const getUser = ()=>{
             idData.id = userId;
-            getUserRecommendByUserId(idData).then((res)=>{
+            getAccount(idData).then((res)=>{
                 if(res.errorCode == 200){
-                    userInfo.id = res.data.blogUserId;
-                    userInfo.account = res.data.blogUserName;
-                    userInfo.picUrl = res.data.blogUserPic;
+                    userInfo.account = res.data.account;
+                    userInfo.picUrl = res.data.picUrl;
                 }else{
                     ElMessage.warning("获取用户信息失败");
                 }

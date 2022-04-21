@@ -12,7 +12,10 @@ export const uploadImg = data => {
     return request({
         url: '/cloud/uploadImg',
         method: 'post',
-        data: data
+        data: data,
+        headers:{
+            'Content-Type': multipart/form-data,
+        }
     });
 };
 //账号

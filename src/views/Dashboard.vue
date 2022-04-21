@@ -290,7 +290,7 @@ export default {
             });
         };
         const getUserInfo=()=>{
-            idData.id = localStorage.getItem("userId");
+            idData.id = localStorage.getItem("user_id");
             getAccount(idData).then((res)=>{
                 if(res.errorCode == 200){
                     accountform.id = res.data.id;

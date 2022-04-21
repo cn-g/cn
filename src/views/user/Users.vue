@@ -263,7 +263,7 @@ export default {
             }
         };
         //上传图片
-        const uploadUrl = "http://localhost:8080/api/cloud/uploadImg";
+        const uploadUrl = "http://localhost:7089/cloud/uploadImg";
         const uploadSuccess = (res)=>{
             if(addEditVisible){
                 addform.picUrl = res.data;

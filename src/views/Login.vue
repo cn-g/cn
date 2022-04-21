@@ -63,7 +63,7 @@ export default {
                             ElMessage.success("登录成功");
                             localStorage.setItem("token", res.data.token);
                             localStorage.setItem("role_id", res.data.roleId);
-                            localStorage.setItem("userId", res.data.id);
+                            localStorage.setItem("user_id", res.data.id);
                             router.push("/");
                         } else {
                             ElMessage.error("账号或密码错误");
