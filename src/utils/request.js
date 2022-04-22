@@ -12,8 +12,8 @@ const service = axios.create({
 
 service.interceptors.request.use(
     config => {
-        config.headers['token'] = localStorage.getItem("token")==null?null:localStorage.getItem("token");
-        config.headers['role_id'] = localStorage.getItem("role_id")==null?null:localStorage.getItem("role_id");
+        config.headers['token'] = localStorage.getItem("wtoken")==null?null:localStorage.getItem("wtoken");
+        config.headers['role_id'] = localStorage.getItem("wrole_id")==null?null:localStorage.getItem("wrole_id");
         return config;
     },
     error => {
@@ -27,9 +27,9 @@ service.interceptors.response.use(
         if (response.data.errorCode === 200) {
             return response.data;
         }else if(response.data.errorCode === 401){
-            localStorage.removeItem("token");
-            localStorage.removeItem("role_id");
-            localStorage.removeItem("user_id");
+            localStorage.removeItem("wtoken");
+            localStorage.removeItem("wrole_id");
+            localStorage.removeItem("wuser_id");
             router.go(0);
         } else {
             Promise.reject();

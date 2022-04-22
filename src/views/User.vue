@@ -253,7 +253,7 @@ export default {
         const uploadUrl = "http://localhost:8080/api/cloud/uploadImg";
         const uploadSuccess = (res)=>{
             userInfo.picUrl = res.data;
-            userform.id = localStorage.getItem("userId");
+            userform.id = localStorage.getItem("wuser_id");
             userform.picUrl = res.data;
             updateUser(userform).then((res)=>{
                 if(res.errorCode == 200){
@@ -271,7 +271,7 @@ export default {
         const accountAditStatus = ref(false);
         const userAditStatus = ref(false);
         const getUserInfo = ()=>{
-            idData.id = localStorage.getItem("userId");
+            idData.id = localStorage.getItem("wuser_id");
             getAccount(idData).then((res)=>{
                 if(res.errorCode == 200){
                     accountform.id = res.data.id;
@@ -355,8 +355,9 @@ export default {
                         if(updaetAccountform.password != null){
                             ElMessage.warning("密码已变更,即将自动退出");
                             setTimeout(function(){
-                                localStorage.removeItem("token");
-                                localStorage.removeItem("role_id");
+                                localStorage.removeItem("wtoken");
+                                localStorage.removeItem("wrole_id");
+                                localStorage.removeItem("wuser_id");
                                 router.push("/login");
                             },2000);
                         }

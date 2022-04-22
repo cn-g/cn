@@ -40,7 +40,7 @@ import { getAccount } from "../api/index";
 import { ElMessage } from 'element-plus';
 export default {
     setup() {
-        const userId = localStorage.getItem("user_id");
+        const userId = localStorage.getItem("wuser_id");
         const message = 2;
 
         let userInfo = reactive({
@@ -81,8 +81,9 @@ export default {
         const router = useRouter();
         const handleCommand = (command) => {
             if (command == "loginout") {
-                localStorage.removeItem("token");
-                localStorage.removeItem("role_id");
+                localStorage.removeItem("wtoken");
+                localStorage.removeItem("wrole_id");
+                localStorage.removeItem("wuser_id");
                 router.push("/login");
             } else if (command == "user") {
                 router.push("/user");

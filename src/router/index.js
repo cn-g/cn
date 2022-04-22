@@ -141,8 +141,8 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title} | 博客后台管理系统`;
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role_id');
+    const token = localStorage.getItem('wtoken');
+    const role = localStorage.getItem('wrole_id');
     if (token == null && role==null && to.path !== '/login') {
         next('/login');
     } else {

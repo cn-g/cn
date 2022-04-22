@@ -61,9 +61,9 @@ export default {
                     userLogin(param).then((res) => {
                         if (res.errorCode == 200) {
                             ElMessage.success("登录成功");
-                            localStorage.setItem("token", res.data.token);
-                            localStorage.setItem("role_id", res.data.roleId);
-                            localStorage.setItem("user_id", res.data.id);
+                            localStorage.setItem("wtoken", res.data.token);
+                            localStorage.setItem("wrole_id", res.data.roleId);
+                            localStorage.setItem("wuser_id", res.data.id);
                             router.push("/");
                         } else {
                             ElMessage.error("账号或密码错误");
